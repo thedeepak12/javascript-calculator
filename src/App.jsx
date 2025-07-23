@@ -29,10 +29,19 @@ function App() {
       if (evaluated) {
         setExpression(current + value);
         setEvaluated(false);
-      } else if (!expression || isOperator(expression.slice(-1))) {
-        setExpression(expression.slice(0, -1) + value);
       } else {
-        setExpression(expression + value);
+        const lastChar = expression.slice(-1);
+        const secondLastChar = expression.slice(-2, -1);
+
+        if (isOperator(lastChar) && value !== '-') {
+          if (isOperator(secondLastChar)) {
+            setExpression(expression.slice(0, -2) + value);
+          } else {
+            setExpression(expression.slice(0, -1) + value);
+          }
+        } else {
+          setExpression(expression + value);
+        }
       }
       setCurrent(value);
     } else if (value === '.') {
@@ -52,7 +61,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#c2c2d6] flex items-center justify-center">
-      <div className="bg-[#040404] p-2 rounded shadow-lg w-80">
+      <div className="bg-[#040404] p-1 rounded shadow-lg w-80">
         <Display expression={expression} current={current} />
         <div className="grid grid-cols-4 gap-0">
           {buttons.map((btn) => (
